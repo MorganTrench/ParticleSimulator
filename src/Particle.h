@@ -1,6 +1,9 @@
 class Particle{
 
+    /* Fields */
+    // Particle Position, Velocity and Acceleration stored as an array of components (3 dimensions)
     float pos[3], vel[3], acc[3];
+    // Particle size (radius) and mass
     float radius, mass;
 
   public:
@@ -19,7 +22,8 @@ class Particle{
     float * getPosition();
     float * getVelocity();
     float * getAcceleration();
-    float getMass(); float getRadius();
+    float getMass();
+    float getRadius();
 
     /* Function Definitions */
 
