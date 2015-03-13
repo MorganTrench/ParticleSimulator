@@ -50,23 +50,26 @@ float Particle::getRadius(){
 }
 
 /* Function Defintions */
+// Updates the position and velocity of the particle, resets the acceleration to the arguments given.
 void Particle::step(float xa, float ya, float za, float timeStep){
-  //Update Positions
+  // Update Positions
   pos[0] += vel[0]*timeStep;
   pos[1] += vel[1]*timeStep;
   pos[2] += vel[2]*timeStep;
 
-  //Update Velocities
+  // Update Velocities
   vel[0] += acc[0]*timeStep;
   vel[1] += acc[1]*timeStep;
   vel[2] += acc[2]*timeStep;
 
-  //Reset Accelarations
+  // Reset Accelarations
   acc[0] = xa;
   acc[1] = ya;
   acc[2] = za;
 }
 
+// Alters the position and velocity of the particle to remain inside a 2d box
+// TODO Update to a 3D Box
 void Particle::applyBoundaries(float left, float right, float up, float down, float restitution){
     if (pos[0] < left) {
         pos[0] = std::abs(pos[0] - left) + left;
