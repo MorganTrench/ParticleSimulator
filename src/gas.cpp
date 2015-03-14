@@ -11,10 +11,12 @@ Depedencies: GLFW3, GLEW
 TODO
 */
 
-#define particleNum 5000
+#define particleNum 50
 
 /* Imports */
 #include <iostream>
+#include <cstdlib>
+#include <cmath>
 #include "Particle.h"
 /* Graphics */
 //#define GLEW_STATIC
@@ -25,7 +27,6 @@ using namespace std;
 
 /* Global Variables */
 // Number of Particles
-// TODO Use this, implement with dynamic memory allocation
 int n;
 // Size of timestep
 float timeStep;
@@ -35,11 +36,19 @@ int windowHeight;
 
 /* Parses commandline arguments into variables */
 void parseArguments(int argc, char *argv[]){
-	// TODO Actually parse arguments
-	n = 1000;
-	timeStep = 0.001;
-	windowWidth = 600;
-	windowHeight = 400;
+	if (argc != 5){
+		cout << "Usage ./ProgramName ParticleNumber TimeStep WindowWidth WindowHeight" << endl;
+		exit(-1);
+	}
+	n = stoi(argv[1]);
+	timeStep = stof(argv[2]);
+	windowWidth = stoi(argv[3]);
+	windowHeight = stoi(argv[4]);
+	// Debug Output
+	cout 	<< "Arguments: \n"
+			<< "\tParticles: " << n  << '\n'
+			<< "\tTime Step: " << timeStep << " seconds" << '\n'
+			<< "\tResoluion: " << windowWidth << "*" << windowHeight << endl;
 }
 
 /* GLFW Error Callback */
@@ -55,7 +64,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-/* Dedicated Function for drawing particles */
+/* Dedicated Function for drawing a particle */
 // Allows easier edits / readability, currently unused
 void drawParticle(Particle p, float rgb[3]){
 	float *pos;
@@ -68,12 +77,17 @@ void drawParticle(Particle p, float rgb[3]){
 }
 
 int main(int argc, char *argv[]){
+	cout << "Particles in a box Simulations" << endl;
 	parseArguments(argc, argv);
+	cout << "Setting up: " << endl;
 
 	// Initialise GLFW
+	cout << "\tInitialising GLFW..." << endl;
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
+
 	// Create Window (and context)
+	cout << "\tCreating Window and Context..." << endl;
 	GLFWwindow* window;
 	window = glfwCreateWindow(windowWidth, windowHeight, "C++ and OpenGL Practice: Gas", NULL, NULL);
 	if (!window) {
@@ -84,56 +98,68 @@ int main(int argc, char *argv[]){
 	glfwSwapInterval(1);
 
 	// Set callbacks
+	cout << "\tSetting Callbacks / Event Handlers..." << endl;
 	glfwSetErrorCallback(error_callback);
 	glfwSetKeyCallback(window, key_callback);
 
 	// Initalise particles for simulation
-	Particle particles[particleNum];
-	for (int i = 0; i < particleNum; i++){
+	cout << "\tReserving memory and creating particles..." << endl;
+	Particle *particles = (Particle *) malloc( sizeof(Particle) * n );
+	for (int i = 0; i < n; i++){
 		float x = ((float) rand()) / RAND_MAX;
 		float y = ((float) rand()) / RAND_MAX;
+		float vx = ((float) rand()) / RAND_MAX;
+		float vy = ((float) rand()) / RAND_MAX;
 		if (rand() % 2 == 0)
 			x = -x;
 		if (rand() % 2 == 0)
 			y = -y;
-		particles[i] = Particle(x, y, 0.0, 1.0, 5.0);
-		particles[i].setVelocity(x, y, 0.0);
+		if (rand() % 2 == 0)
+			vx = -vx;
+		if (rand() % 2 == 0)
+			vy = -vy;
+		particles[i] = Particle(x, y, 0.0, 1.0, 1.0);
+		particles[i].setVelocity(vx, vy, 0.0);
 	}
 
 	// Rendering and Simulation Loop
+	float simulationTime = 0.0;
+	float prevReportTime = 0.0;
+	cout << "Beginning Simulation..." << endl;
 	while (!glfwWindowShouldClose(window)){
-
+		if((simulationTime - prevReportTime) >= 10*timeStep){
+			cout << "\r\tTime: " << simulationTime << " seconds";// << endl;
+			cout.flush();
+			prevReportTime = simulationTime;
+		}
+		//cout << simulationTime << " - " << prevReportTime << endl;
 		// Clear Screen (black by default)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Red Particles, temporary
-		float rgb[3] = {1.f, 0.f, 0.f};
+		float rgb[3] = {1.0f, 0.0f, 0.0f};
 
 		// Draw and update particles
-		for (int i = 0; i < particleNum; i++){
+		for (int i = 0; i < n; i++){
+			//Draw Particle
+			drawParticle(particles[i], rgb);
 
-		// TODO Use this function
-		//drawParticle(particles[i], rgb);
+			// Update Particle Position
+			particles[i].step(0.0f, -1.0f, 0.0f, timeStep);
+			particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.95);
+		}
+		simulationTime += timeStep;
 
-		float *pos;
-		pos = particles[i].getPosition();
-		glPointSize(particles[i].getRadius());
-		glBegin(GL_POINTS);
-		glColor3f(rgb[0], rgb[1], rgb[2]);
-		glVertex3f(pos[0], pos[1], pos[2]);
-		glEnd();
-
-		particles[i].step(0.f, -1.f, 0.f, 0.01);
-		particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.95);
+		// Update Screen and get events
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
-
-	// Update Screen and get events
-	glfwSwapBuffers(window);
-	glfwPollEvents();
-}
+	cout << endl;
 
 	/* Terminate */
+	cout << "Ending Simulation..." << endl;
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	cout << "Done" << endl;
 	exit(EXIT_SUCCESS);
 }
