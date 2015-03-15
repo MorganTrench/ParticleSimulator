@@ -62,7 +62,8 @@ void Particle::step(float xa, float ya, float za, float timeStep){
   vel[1] += acc[1]*timeStep;
   vel[2] += acc[2]*timeStep;
 
-  // Reset Accelarations
+  // Reset Accelarations by calling interaction functions
+  // TODO Implement interaction functions
   acc[0] = xa;
   acc[1] = ya;
   acc[2] = za;

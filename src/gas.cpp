@@ -17,6 +17,7 @@ TODO
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include "time.h"
 #include "Particle.h"
 /* Graphics */
 //#define GLEW_STATIC
@@ -66,7 +67,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 /* Dedicated Function for drawing a particle */
 // Allows easier edits / readability, currently unused
-void drawParticle(Particle p, float rgb[3]){
+inline void drawParticle(Particle p, float rgb[3]){
 	float *pos;
 	pos = p.getPosition();
 	glPointSize(p.getRadius());
@@ -80,6 +81,7 @@ int main(int argc, char *argv[]){
 	cout << "Particles in a box Simulations" << endl;
 	parseArguments(argc, argv);
 	cout << "Setting up: " << endl;
+	srand(time(NULL));
 
 	// Initialise GLFW
 	cout << "\tInitialising GLFW..." << endl;
@@ -118,7 +120,7 @@ int main(int argc, char *argv[]){
 			vx = -vx;
 		if (rand() % 2 == 0)
 			vy = -vy;
-		particles[i] = Particle(x, y, 0.0, 1.0, 1.0);
+		particles[i] = Particle(x, y, 0.0, 1.0, 3.0);
 		particles[i].setVelocity(vx, vy, 0.0);
 	}
 
@@ -138,14 +140,33 @@ int main(int argc, char *argv[]){
 
 		// Red Particles, temporary
 		float rgb[3] = {1.0f, 0.0f, 0.0f};
+		float * pi;
+		float * pj;
+		float distSquared, xcomp, ycomp, zcomp;
 
 		// Draw and update particles
 		for (int i = 0; i < n; i++){
 			//Draw Particle
 			drawParticle(particles[i], rgb);
 
+			// Temp Gravity
+			float forces[3] = {0.0f, 0.0f, 0.0f};
+			for(int j = 0; j < n; j++){
+				if(i != j){
+					pi = particles[i].getPosition();
+					pj = particles[j].getPosition();
+					xcomp = (pj[0] - pi[0]);
+					ycomp = (pj[1] - pi[1]);
+					zcomp = (pj[2] - pi[2]);
+					distSquared = xcomp*xcomp + ycomp*ycomp + zcomp*zcomp;
+					forces[0] += (0.01*xcomp / distSquared) + (-0.01*particles[i].getVelocity()[0]);
+					forces[1] += (0.01*ycomp / distSquared) + (-0.01*particles[i].getVelocity()[1]);
+					forces[2] += (0.01*zcomp / distSquared) + (-0.01*particles[i].getVelocity()[2]);
+				}
+			}
+
 			// Update Particle Position
-			particles[i].step(0.0f, -1.0f, 0.0f, timeStep);
+			particles[i].step(forces[0], forces[1], forces[2], timeStep);
 			particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.95);
 		}
 		simulationTime += timeStep;
@@ -158,6 +179,7 @@ int main(int argc, char *argv[]){
 
 	/* Terminate */
 	cout << "Ending Simulation..." << endl;
+	free(particles);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	cout << "Done" << endl;
