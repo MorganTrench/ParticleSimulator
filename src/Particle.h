@@ -2,7 +2,7 @@ class Particle{
 
     /* Fields */
     // Particle Position, Velocity and Acceleration stored as an array of components (3 dimensions)
-    float pos[3], vel[3], acc[3];
+    float pos[3], vel[3], acc[3], rgb[3];
     // Particle size (radius) and mass
     float radius, mass;
 
@@ -16,12 +16,15 @@ class Particle{
     void setPosition(float x, float y, float z);
     void setVelocity(float xv, float yv, float zv);
     void setAcceleration(float xa, float ya, float za);
-    void setMass(float m); void setRadius(float m);
+    void setMass(float m);
+    void setRadius(float m);
 
     /* Getters */
     float * getPosition();
     float * getVelocity();
     float * getAcceleration();
+    float getVelocitySquared();
+    float * getColour();
     float getMass();
     float getRadius();
 
@@ -30,5 +33,4 @@ class Particle{
     /* Update Position, Velocitiy and reset acceleration to the passed in values (eg gravity) */
     void step(float xa, float ya, float za, float timeStep);
     void applyBoundaries(float left, float right, float up, float down, float restitution);
-
 };

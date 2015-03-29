@@ -42,6 +42,9 @@ float * Particle::getVelocity(){
 float * Particle::getAcceleration(){
   return acc;
 };
+float Particle::getVelocitySquared(){
+  return vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2];
+};
 float Particle::getMass(){
   return mass;
 }
@@ -50,6 +53,15 @@ float Particle::getRadius(){
 }
 
 /* Function Defintions */
+// Naive colour function, TODO improve
+float * Particle::getColour(){
+  rgb[2] = 1.0f;
+  float vsq = vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2];
+  vsq = 1 - 10/vsq;
+  rgb[0] = vsq; rgb[1]= vsq;
+  return rgb;
+}
+
 // Updates the position and velocity of the particle, resets the acceleration to the arguments given.
 void Particle::step(float xa, float ya, float za, float timeStep){
   // Update Positions
