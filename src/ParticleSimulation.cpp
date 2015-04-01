@@ -72,13 +72,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 /* Dedicated Function for drawing a particle */
 // Allows easier edits / readability, currently unused
 inline void drawParticle(Particle p, float rgb[3]){
-	float *pos;
-	pos = p.getPosition();
-	glPointSize(p.getRadius());
-	glBegin(GL_POINTS);
-	glColor3f(rgb[0], rgb[1], rgb[2]);
-	glVertex3f(pos[0], pos[1], pos[2]);
-	glEnd();
+	if(p.getState() == alive){
+		float *pos;
+		pos = p.getPosition();
+		glPointSize(p.getRadius());
+		glBegin(GL_POINTS);
+		glColor3f(rgb[0], rgb[1], rgb[2]);
+		glVertex3f(pos[0], pos[1], pos[2]);
+		glEnd();
+	}
 }
 
 int main(int argc, char *argv[]){
@@ -128,7 +130,8 @@ int main(int argc, char *argv[]){
 		if (rand() % 2 == 0)
 			vy = -vy;
 		particles[i] = Particle(x, y, 0.0, 1.0, 1.0);
-		particles[i].setVelocity(vx, vy, 0.0);
+		particles[i].setVelocity(0.0, 0.0, 0.0);
+		// particles[i].setVelocity(vx, vy, 0.0);
 	}
 	// Initalise interaction class
 	Interaction interactions = Interaction(particles, &n);

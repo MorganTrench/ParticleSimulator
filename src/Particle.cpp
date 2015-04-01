@@ -20,12 +20,13 @@ Particle::Particle(){
   pos[0] = 0; pos[1] = 0; pos[2] = 0;
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
   acc[0] = 0; acc[1] = 0; acc[2] = 0;
-  mass = 1; radius = 1;};
+  mass = 1; radius = 1; state = alive;
+};
 Particle::Particle(float x, float y, float z, float m, float r){
   pos[0] = x; pos[1] = y; pos[2] = z;
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
   acc[0] = 0; acc[1] = 0; acc[2] = 0;
-  mass = m; radius = r;
+  mass = m; radius = r; state = alive;
 };
 
 /* Setters*/
@@ -64,13 +65,19 @@ float Particle::getMass(){
 float Particle::getRadius(){
   return radius;
 }
+status Particle::getState(){
+  return state;
+}
 
 /* Mutators */
 void Particle::addForce(float xf, float yf, float zf){
-  acc[0] += xf*mass; acc[1] += yf*mass; acc[2] += zf*mass;
+  acc[0] += xf/mass; acc[1] += yf/mass; acc[2] += zf/mass;
 }
 void Particle::subtractForce(float xf, float yf, float zf){
   acc[0] -= xf*mass; acc[1] -= yf*mass; acc[2] -= zf*mass;
+}
+void Particle::setState(status s){
+  state = s;
 }
 /* Function Defintions */
 // Naive colour function, TODO improve

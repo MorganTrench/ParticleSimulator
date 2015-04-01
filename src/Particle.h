@@ -11,6 +11,7 @@
     Description:
         Header file describing the Partcle Class
 */
+    enum status {alive, dead};
 
     class Particle{
 
@@ -19,6 +20,7 @@
         float pos[3], vel[3], acc[3], rgb[3];
         // Particle size (radius) and mass
         float radius, mass;
+        status state;
 
       public:
 
@@ -41,10 +43,12 @@
         float * getColour();
         float getMass();
         float getRadius();
+        status getState();
 
         /* Mutators */
         void addForce(float xf, float yf, float zf);
         void subtractForce(float xf, float yf, float zf);
+        void setState(status s);
 
         /* Function Definitions */
 
