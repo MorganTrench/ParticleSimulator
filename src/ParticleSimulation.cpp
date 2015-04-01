@@ -7,7 +7,7 @@
     Compiler Options: -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
     
     Compile Instructions
-		- OSX: g++ -o gas src/Particle.cpp src/gas.cpp -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+		- OSX: g++ -O3 -o ParticleSimulation.out src/Particle.cpp src/Interaction.cpp src/ParticleSimulation.cpp -lglfw3 -framework Cocoa -framework OpenGL
 	Usage
 		- ./ProgramName ParticleNumber TimeStep WindowWidth WindowHeight
 
@@ -54,6 +54,15 @@ void parseArguments (int argc, char *argv[]) {
 			<< "\tParticles: " << n  << '\n'
 			<< "\tTime Step: " << timeStep << " seconds" << '\n'
 			<< "\tResoluion: " << windowWidth << "*" << windowHeight << std::endl;
+}
+
+void checkMass(Particle *particles){
+	float mass = 0;
+	for(int i = 0; i < n; i++){
+		if(particles[i].getState() == alive)
+			mass += particles[i].getMass();
+	}
+	std::cout << mass << std::endl;
 }
 
 /* GLFW Error Callback */
@@ -144,13 +153,12 @@ int main(int argc, char *argv[]){
 	std::cout << "Beginning Simulation..." << std::endl;
 	while (!glfwWindowShouldClose(window)){
 		if((simulationTime - prevReportTime) >= reportNum*timeStep){
-
-			std::cout << "\r\tTime: " << simulationTime << " seconds";
+			// std::cout << "\r\tTime: " << simulationTime << " seconds";
 			prevRealTime = realTime;
 			realTime = glfwGetTime();
-			std::cout << " - " << reportNum/(realTime - prevRealTime) << " fps";
-			std::cout << " - " << timeStep*reportNum/(realTime - prevRealTime) << " time ratio";
-			std::cout.flush();
+			// std::cout << " - " << reportNum/(realTime - prevRealTime) << " fps";
+			// std::cout << " - " << timeStep*reportNum/(realTime - prevRealTime) << " time ratio";
+			// std::cout.flush();
 			prevReportTime = simulationTime;
 		}
 		//std::cout << simulationTime << " - " << prevReportTime << std::endl;
@@ -169,6 +177,7 @@ int main(int argc, char *argv[]){
 			particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.8);
 		}
 		simulationTime += timeStep;
+		checkMass(particles);
 
 		// Update Screen and get events
 		glfwSwapBuffers(window);

@@ -27,6 +27,7 @@
 		void constant(Particle *p, float acc[3]);
 		void gravity(Particle *p1, Particle *p2);
 		void interParticleGravity(int index);
+		void drag(Particle *p);
 	};
 
 #endif
