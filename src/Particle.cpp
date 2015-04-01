@@ -1,3 +1,17 @@
+/**
+  @file
+  @author  Morgan Trench  <morgan.trench@gmail.com>
+  
+  @version 1.0
+  
+  @section LICENSE
+  TODO
+
+  @section DESCRIPTION
+  Implementation of the methods within the Particle Class
+
+ */
+
 #include "Particle.h"
 #include <cmath>
 
@@ -6,8 +20,7 @@ Particle::Particle(){
   pos[0] = 0; pos[1] = 0; pos[2] = 0;
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
   acc[0] = 0; acc[1] = 0; acc[2] = 0;
-  mass = 1; radius = 1;
-};
+  mass = 1; radius = 1;};
 Particle::Particle(float x, float y, float z, float m, float r){
   pos[0] = x; pos[1] = y; pos[2] = z;
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
@@ -52,6 +65,13 @@ float Particle::getRadius(){
   return radius;
 }
 
+/* Mutators */
+void Particle::addForce(float xf, float yf, float zf){
+  acc[0] += xf*mass; acc[1] += yf*mass; acc[2] += zf*mass;
+}
+void Particle::subtractForce(float xf, float yf, float zf){
+  acc[0] -= xf*mass; acc[1] -= yf*mass; acc[2] -= zf*mass;
+}
 /* Function Defintions */
 // Naive colour function, TODO improve
 float * Particle::getColour(){
@@ -63,7 +83,7 @@ float * Particle::getColour(){
 }
 
 // Updates the position and velocity of the particle, resets the acceleration to the arguments given.
-void Particle::step(float xa, float ya, float za, float timeStep){
+void Particle::step(float timeStep){
   // Update Positions
   pos[0] += vel[0]*timeStep;
   pos[1] += vel[1]*timeStep;
@@ -73,12 +93,6 @@ void Particle::step(float xa, float ya, float za, float timeStep){
   vel[0] += acc[0]*timeStep;
   vel[1] += acc[1]*timeStep;
   vel[2] += acc[2]*timeStep;
-
-  // Reset Accelarations by calling interaction functions
-  // TODO Implement interaction functions
-  acc[0] = xa;
-  acc[1] = ya;
-  acc[2] = za;
 }
 
 // Alters the position and velocity of the particle to remain inside a 2d box

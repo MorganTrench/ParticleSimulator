@@ -1,36 +1,56 @@
-class Particle{
+#ifndef PARTICLE_HEADER
+#define PARTICLE_HEADER
+/**
+    File: Particle.h
+    Author: Morgan Trench
+    Date: 30/03/15
+    Contributors: ...
+    Language: C++
+    Compiler Options: -
+    
+    Description:
+        Header file describing the Partcle Class
+*/
 
-    /* Fields */
-    // Particle Position, Velocity and Acceleration stored as an array of components (3 dimensions)
-    float pos[3], vel[3], acc[3], rgb[3];
-    // Particle size (radius) and mass
-    float radius, mass;
+    class Particle{
 
-  public:
+        /* Fields */
+        // Particle Position, Velocity and Acceleration stored as an array of components (3 dimensions)
+        float pos[3], vel[3], acc[3], rgb[3];
+        // Particle size (radius) and mass
+        float radius, mass;
 
-    /* Constructors */
-    Particle();
-    Particle(float x, float y, float z, float m, float r);
+      public:
 
-    /* Setters */
-    void setPosition(float x, float y, float z);
-    void setVelocity(float xv, float yv, float zv);
-    void setAcceleration(float xa, float ya, float za);
-    void setMass(float m);
-    void setRadius(float m);
+        /* Constructors */
+        Particle();
+        Particle(float x, float y, float z, float m, float r);
 
-    /* Getters */
-    float * getPosition();
-    float * getVelocity();
-    float * getAcceleration();
-    float getVelocitySquared();
-    float * getColour();
-    float getMass();
-    float getRadius();
+        /* Setters */
+        void setPosition(float x, float y, float z);
+        void setVelocity(float xv, float yv, float zv);
+        void setAcceleration(float xa, float ya, float za);
+        void setMass(float m);
+        void setRadius(float m);
 
-    /* Function Definitions */
+        /* Getters */
+        float * getPosition();
+        float * getVelocity();
+        float * getAcceleration();
+        float getVelocitySquared();
+        float * getColour();
+        float getMass();
+        float getRadius();
 
-    /* Update Position, Velocitiy and reset acceleration to the passed in values (eg gravity) */
-    void step(float xa, float ya, float za, float timeStep);
-    void applyBoundaries(float left, float right, float up, float down, float restitution);
-};
+        /* Mutators */
+        void addForce(float xf, float yf, float zf);
+        void subtractForce(float xf, float yf, float zf);
+
+        /* Function Definitions */
+
+        /* Update Position, Velocitiy and reset acceleration to the passed in values (eg gravity) */
+        void step(float timeStep);
+        void applyBoundaries(float left, float right, float up, float down, float restitution);
+    };
+
+#endif
