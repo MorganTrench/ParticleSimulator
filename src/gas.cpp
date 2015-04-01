@@ -154,12 +154,12 @@ int main(int argc, char *argv[]){
 		// Clear Screen (black by default)
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		interactions.interact();
+
 		// Draw and update particles
 		for (int i = 0; i < n; i++){
 			//Draw Particle
 			drawParticle(particles[i], particles[i].getColour());
-
-			interactions.interact();
 
 			// Update Particle Position
 			particles[i].step(timeStep);
