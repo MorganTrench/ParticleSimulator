@@ -1,3 +1,4 @@
+#import <iostream>
 #ifndef PARTICLE_HEADER
 #define PARTICLE_HEADER
 /**
@@ -7,9 +8,9 @@
     Contributors: ...
     Language: C++
     Compiler Options: -
-    
+
     Description:
-        Header file describing the Partcle Class
+        Header file describing the Particle Class
 */
     enum status {alive, dead};
 
@@ -17,44 +18,46 @@
 
         /* Fields */
         // Particle Position, Velocity and Acceleration stored as an array of components (3 dimensions)
-        float pos[3], vel[3], acc[3], rgb[3];
+        double pos[3], vel[3], acc[3], rgb[3];
         // Particle size (radius) and mass
-        float radius, mass;
+        double radius, mass;
         status state;
 
       public:
 
         /* Constructors */
         Particle();
-        Particle(float x, float y, float z, float m, float r);
+        Particle(double x, double y, double z, double m, double r);
 
         /* Setters */
-        void setPosition(float x, float y, float z);
-        void setVelocity(float xv, float yv, float zv);
-        void setAcceleration(float xa, float ya, float za);
-        void setMass(float m);
-        void setRadius(float m);
+        void setPosition(double x, double y, double z);
+        void setVelocity(double xv, double yv, double zv);
+        void setAcceleration(double xa, double ya, double za);
+        void setMass(double m);
+        void setRadius(double m);
 
         /* Getters */
-        float * getPosition();
-        float * getVelocity();
-        float * getAcceleration();
-        float getVelocitySquared();
-        float * getColour();
-        float getMass();
-        float getRadius();
+        double * getPosition();
+        double * getVelocity();
+        double * getAcceleration();
+        double getVelocitySquared();
+        double * getColour();
+        double getMass();
+        double getRadius();
         status getState();
 
         /* Mutators */
-        void addForce(float xf, float yf, float zf);
-        void subtractForce(float xf, float yf, float zf);
+        void addForce(double xf, double yf, double zf);
+        void subtractForce(double xf, double yf, double zf);
         void setState(status s);
 
         /* Function Definitions */
 
-        /* Update Position, Velocitiy and reset acceleration to the passed in values (eg gravity) */
-        void step(float timeStep);
-        void applyBoundaries(float left, float right, float up, float down, float restitution);
+        /* Update Position, Velocity and reset acceleration to the passed in values (eg gravity) */
+        void step(double timeStep);
+        void applyBoundaries(double left, double right, double up, double down, double restitution);
+        bool checkParticle(std::string message);
+        void outputProperties();
     };
 
 #endif

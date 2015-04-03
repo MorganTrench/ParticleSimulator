@@ -29,3 +29,6 @@
 
 # Editor Files
 *.linter-clang-includes
+
+# Test output
+*.testOut

@@ -9,7 +9,7 @@
     Contributors: ...
     Language: C++
     Compiler Options: -
-    
+
     Description:
         Header file describing the Interaction Class
 */
@@ -24,7 +24,7 @@
 
 	private:
 		void resetAccelerations();
-		void constant(Particle *p, float acc[3]);
+		void constant(Particle *p, double acc[3]);
 		void gravity(Particle *p1, Particle *p2);
 		void interParticleGravity(int index);
 		void drag(Particle *p);

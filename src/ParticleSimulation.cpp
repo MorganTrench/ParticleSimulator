@@ -5,7 +5,7 @@
     Contributors: ...
     Language: C++
     Compiler Options: -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
-    
+
     Compile Instructions
 		- OSX: g++ -O3 -o ParticleSimulation.out src/Particle.cpp src/Interaction.cpp src/ParticleSimulation.cpp -lglfw3 -framework Cocoa -framework OpenGL
 	Usage
@@ -34,12 +34,12 @@
 // Number of Particles
 int n;
 // Size of timestep
-float timeStep;
+double timeStep;
 // Window Dimensions
 int windowWidth;
 int windowHeight;
 
-/* Parses commandline arguments into variables */
+/* Parses command line arguments into variables */
 void parseArguments (int argc, char *argv[]) {
 	if (argc != 5){
 		std::cout << "Usage ./ProgramName ParticleNumber TimeStep WindowWidth WindowHeight" << std::endl;
@@ -57,7 +57,7 @@ void parseArguments (int argc, char *argv[]) {
 }
 
 void checkMass(Particle *particles){
-	float mass = 0;
+	double mass = 0;
 	for(int i = 0; i < n; i++){
 		if(particles[i].getState() == alive)
 			mass += particles[i].getMass();
@@ -80,9 +80,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 /* Dedicated Function for drawing a particle */
 // Allows easier edits / readability, currently unused
-inline void drawParticle(Particle p, float rgb[3]){
+inline void drawParticle(Particle p, double rgb[3]){
 	if(p.getState() == alive){
-		float *pos;
+		double *pos;
 		pos = p.getPosition();
 		glPointSize(p.getRadius());
 		glBegin(GL_POINTS);
@@ -126,10 +126,10 @@ int main(int argc, char *argv[]){
 	std::cout << "\tReserving memory and creating particles..." << std::endl;
 	Particle *particles = (Particle *) malloc( sizeof(Particle) * n );
 	for (int i = 0; i < n; i++){
-		float x = ((float) rand()) / RAND_MAX;
-		float y = ((float) rand()) / RAND_MAX;
-		float vx = ((float) rand()) / RAND_MAX;
-		float vy = ((float) rand()) / RAND_MAX;
+		double x = ((double) rand()) / RAND_MAX;
+		double y = ((double) rand()) / RAND_MAX;
+		double vx = ((double) rand()) / RAND_MAX;
+		double vy = ((double) rand()) / RAND_MAX;
 		if (rand() % 2 == 0)
 			x = -x;
 		if (rand() % 2 == 0)
@@ -146,10 +146,10 @@ int main(int argc, char *argv[]){
 	Interaction interactions = Interaction(particles, &n);
 
 	// Rendering and Simulation Loop
-	float simulationTime = 0.0;
-	float prevReportTime = 0.0;
-	float realTime = 0.0;
-	float prevRealTime = 0.0; 
+	double simulationTime = 0.0;
+	double prevReportTime = 0.0;
+	double realTime = 0.0;
+	double prevRealTime = 0.0;
 	std::cout << "Beginning Simulation..." << std::endl;
 	while (!glfwWindowShouldClose(window)){
 		if((simulationTime - prevReportTime) >= reportNum*timeStep){
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]){
 			particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.8);
 		}
 		simulationTime += timeStep;
-		checkMass(particles);
+		// checkMass(particles);
 
 		// Update Screen and get events
 		glfwSwapBuffers(window);
