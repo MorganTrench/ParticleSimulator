@@ -75,7 +75,7 @@ void Particle::addForce(double xf, double yf, double zf){
   acc[0] += xf/mass; acc[1] += yf/mass; acc[2] += zf/mass;
 }
 void Particle::subtractForce(double xf, double yf, double zf){
-  acc[0] -= xf*mass; acc[1] -= yf*mass; acc[2] -= zf*mass;
+  addForce(-xf, -yf, -zf);
 }
 void Particle::setState(status s){
   state = s;

@@ -130,8 +130,8 @@ void Interaction::interact(){
         }
     }
     // Uncommenting this 'deletes random or all particles' for no apparent reason, then they sometimes magically reappear TODO fix
-    for(int i = 0; i < *n; i++){
-        drag(&particles[i]);
-    }
+    // for(int i = 0; i < *n; i++){
+    //     drag(&particles[i]);
+    // }
 }
 
