@@ -98,14 +98,16 @@ void Particle::step(double timeStep){
   }
 
   // Update Positions
-  pos[0] += vel[0]*timeStep;
-  pos[1] += vel[1]*timeStep;
-  pos[2] += vel[2]*timeStep;
+  pos[0] += (vel[0] + 0.5*timeStep*acc[0])*timeStep;
+  pos[1] += (vel[1] + 0.5*timeStep*acc[1])*timeStep;
+  pos[2] += (vel[2] + 0.5*timeStep*acc[2])*timeStep;
 
   // Update Velocities
   vel[0] += acc[0]*timeStep;
   vel[1] += acc[1]*timeStep;
   vel[2] += acc[2]*timeStep;
+
+  applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.8);
 
   if(checkParticle("Post-Step")){
     setState(dead);

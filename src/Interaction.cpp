@@ -11,7 +11,7 @@
         of applying interactions between particles whilst maintaining some efficiency.
 
    	TODOs:
-   		Implement everything
+   		Move Collision detection into its own method outside of the gravity()
 */
 
 #include "Interaction.h"
@@ -86,7 +86,7 @@ void Interaction::gravity(Particle *p1, Particle *p2){
     double factor = G * p1->getMass() * p2->getMass() / (distSquared * dist);
 
     // Sticky Collision, TODO: improve
-    if(dist < (0.002*p1->getRadius() + 0.002*p2->getRadius())){
+    if(dist < (0.001*p1->getRadius() + 0.001*p2->getRadius())){
         collisions++;
         p2->setState(dead);
         // Calculate properties of combined particle
@@ -129,9 +129,5 @@ void Interaction::interact(){
             gravity(&particles[i], &particles[j]);
         }
     }
-    // Uncommenting this 'deletes random or all particles' for no apparent reason, then they sometimes magically reappear TODO fix
-    // for(int i = 0; i < *n; i++){
-    //     drag(&particles[i]);
-    // }
 }
 

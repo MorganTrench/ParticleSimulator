@@ -17,10 +17,12 @@
 	class Interaction{
 		Particle *particles;
 		int *n;
+		int wP;
 
 	public:
 		Interaction(Particle *p, int *n);
 		void interact();
+		void doTask();
 
 	private:
 		void resetAccelerations();

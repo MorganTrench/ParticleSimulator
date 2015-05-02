@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <thread>
 #include "Particle.h"
 #include "Interaction.h"
 /* Graphics */
@@ -38,6 +39,11 @@ double timeStep;
 // Window Dimensions
 int windowWidth;
 int windowHeight;
+// GUI
+GLFWwindow* window;
+bool shouldClose = false;
+// Data
+Particle *particles;
 
 /* Parses command line arguments into variables */
 void parseArguments (int argc, char *argv[]) {
@@ -50,7 +56,7 @@ void parseArguments (int argc, char *argv[]) {
 	windowWidth = atoi(argv[3]);
 	windowHeight = atoi(argv[4]);
 	// Debug Output
-	std::cout 	<< "Arguments: \n"
+	std::cout 	<< "Passed Arguments: \n"
 			<< "\tParticles: " << n  << '\n'
 			<< "\tTime Step: " << timeStep << " seconds" << '\n'
 			<< "\tResoluion: " << windowWidth << "*" << windowHeight << std::endl;
@@ -92,6 +98,16 @@ inline void drawParticle(Particle p, double rgb[3]){
 	}
 }
 
+static void simThread(Interaction interactions){
+	while(!shouldClose){
+		interactions.interact();
+		// Update Particle Position
+		for (int i = 0; i < n; i++){
+			particles[i].step(timeStep);
+		}
+	}
+}
+
 int main(int argc, char *argv[]){
 	std::cout << "Particles in a box Simulations" << std::endl;
 	parseArguments(argc, argv);
@@ -108,7 +124,6 @@ int main(int argc, char *argv[]){
 
 	// Create Window (and context)
 	std::cout << "\tCreating Window and Context..." << std::endl;
-	GLFWwindow* window;
 	window = glfwCreateWindow(windowWidth, windowHeight, "C++ and OpenGL Practice: Gas", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -124,7 +139,7 @@ int main(int argc, char *argv[]){
 
 	// Initalise particles for simulation
 	std::cout << "\tReserving memory and creating particles..." << std::endl;
-	Particle *particles = (Particle *) malloc( sizeof(Particle) * n );
+	particles = (Particle *) malloc( sizeof(Particle) * n );
 	for (int i = 0; i < n; i++){
 		double x = ((double) rand()) / RAND_MAX;
 		double y = ((double) rand()) / RAND_MAX;
@@ -142,54 +157,39 @@ int main(int argc, char *argv[]){
 		particles[i].setVelocity(0.0, 0.0, 0.0);
 		// particles[i].setVelocity(vx, vy, 0.0);
 	}
+
 	// Initalise interaction class
 	Interaction interactions = Interaction(particles, &n);
+	// Rendering Loop and Simulation Thread
+	std::thread worker = std::thread(simThread, interactions);
 
-	// Rendering and Simulation Loop
-	double simulationTime = 0.0;
-	double prevReportTime = 0.0;
-	double realTime = 0.0;
-	double prevRealTime = 0.0;
 	std::cout << "Beginning Simulation..." << std::endl;
 	while (!glfwWindowShouldClose(window)){
-		if((simulationTime - prevReportTime) >= reportNum*timeStep){
-			// std::cout << "\r\tTime: " << simulationTime << " seconds";
-			prevRealTime = realTime;
-			realTime = glfwGetTime();
-			// std::cout << " - " << reportNum/(realTime - prevRealTime) << " fps";
-			// std::cout << " - " << timeStep*reportNum/(realTime - prevRealTime) << " time ratio";
-			// std::cout.flush();
-			prevReportTime = simulationTime;
-		}
-		//std::cout << simulationTime << " - " << prevReportTime << std::endl;
 		// Clear Screen (black by default)
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		interactions.interact();
+		// Calculate forces, collide
+		// interactions.interact();
 
 		// Draw and update particles
 		for (int i = 0; i < n; i++){
 			//Draw Particle
 			drawParticle(particles[i], particles[i].getColour());
-
-			// Update Particle Position
-			particles[i].step(timeStep);
-			particles[i].applyBoundaries(-1.0, 1.0, 1.0, -1.0, 0.8);
 		}
-		simulationTime += timeStep;
-		// checkMass(particles);
 
 		// Update Screen and get events
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-	std::cout << std::endl;
 
 	/* Terminate */
 	std::cout << "Ending Simulation..." << std::endl;
+	std::cout << "\tStopping threads..." << std::endl;
+	shouldClose = true;
+	worker.join();
+	std::cout << "\tFreeing memory..." << std::endl;
 	free(particles);
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	std::cout << "Done" << std::endl;
+	std::cout << "Terminating..." << std::endl;
 	exit(EXIT_SUCCESS);
 }
